@@ -15,4 +15,4 @@ def get_detail(place, frequency):
 
 
 if __name__ == "__main__":
-    get_detail(place="patnax", frequency=1)
+    get_detail(place="patna", frequency=1)
