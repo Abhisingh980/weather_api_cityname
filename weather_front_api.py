@@ -13,19 +13,22 @@ if place:
 
     st.subheader(f"{option} for the next {frequency} days in {place}")
     data, date, sky_dict = bw.get_detail(place, frequency)
-    if option in "Temperature":
-        temperature = [data[index]['temp']for index in range(len(data))]
-        temperature = [temperature[i]-273.15 for i in range(len(data))]
-        figure = px.line(x=date, y=temperature, labels={"x": "Date", "y": "Temperature (C)"})
-        st.plotly_chart(figure)
-    else:
-        sky_type = [sky_dict[index][0]['main']for index in range(len(data))]
-        sky_description = [sky_dict[index][0]['description']for index in range(len(data))]
-        image_name = {"Clouds": "image/cloudy.jpg","Rain": "image/rain.jpg",
-                      "Snow": "image/snow.jpeg", "Clear": "image/clear.png"}
-        sky = []
-        for image in sky_type:
-            sky.append(image_name[image])
+    if date:
+        if option in "Temperature":
+            temperature = [data[index]['temp']for index in range(len(data))]
+            temperature = [temperature[i] / 10 for i in range(len(data))]
+            figure = px.line(x=date, y=temperature, labels={"x": "Date", "y": "Temperature (C)"})
+            st.plotly_chart(figure)
+        else:
+            sky_type = [sky_dict[index][0]['main']for index in range(len(data))]
+            sky_description = [sky_dict[index][0]['description']for index in range(len(data))]
+            image_name = {"Clouds": "image/cloudy.jpg","Rain": "image/rain.jpg",
+                          "Snow": "image/snow.jpeg", "Clear": "image/clear.png"}
+            sky = []
+            for image in sky_type:
+                sky.append(image_name[image])
 
-        st.image(sky, caption=sky_description, width=200)
+            st.image(sky, caption=sky_description, width=200)
+    else:
+        st.write(data)
 
