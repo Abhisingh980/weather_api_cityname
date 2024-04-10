@@ -1,9 +1,8 @@
 import requests
-API_KEY = "87aba3cfe16d25e95af26264a8a44c24"
-
-
+import os
+api_key = os.environ["API"]
 def get_detail(place, frequency):
-    url = f"https://api.openweathermap.org/data/2.5/forecast?q={place}&appid={API_KEY}"
+    url = f"https://api.openweathermap.org/data/2.5/forecast?q={place}&appid={api_key}"
     data = requests.get(url).json()
     print(data)
     if data['cod'] == '200':
