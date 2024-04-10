@@ -1,4 +1,5 @@
 import streamlit as st
+!pip install plotly
 import plotly.express as px
 import backend_weather as bw
 
@@ -31,5 +32,3 @@ if place:
             st.image(sky, caption=sky_description, width=200)
     else:
         st.write(data.title())
-
-
