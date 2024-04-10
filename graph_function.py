@@ -1,6 +1,6 @@
 import random
 import pandas as pd
-!pip install plotly
+#!pip install plotly
 import plotly.express as px
 
 plot_list = ['bar', 'bar_polar', 'density_heatmap', 'line', 'scatter', 'scatter_polar']
