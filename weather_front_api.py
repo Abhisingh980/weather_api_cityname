@@ -1,5 +1,5 @@
 import streamlit as st
-#!pip install plotly
+
 import plotly.express as px
 import backend_weather as bw
 
@@ -18,7 +18,7 @@ if place:
         if option in "Temperature":
             temperature = [data[index]['temp'] for index in range(len(data))]
             temperature = [temperature[i] / 10 for i in range(len(data))]
-            figure = px.line(x=date, y=temperature, labels={"x": "Date", "y": "Temperature (C)"})
+            figure = px.line(x=date,y=temperature,labels={'x':'Date','y':'Temperature (c)'})
             st.plotly_chart(figure)
         else:
             sky_type = [sky_dict[index][0]['main'] for index in range(len(data))]

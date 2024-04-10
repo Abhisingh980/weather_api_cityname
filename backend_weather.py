@@ -4,7 +4,6 @@ api_key = os.environ["API"]
 def get_detail(place, frequency):
     url = f"https://api.openweathermap.org/data/2.5/forecast?q={place}&appid={api_key}"
     data = requests.get(url).json()
-    print(data)
     if data['cod'] == '200':
         index = 8*frequency
         filtered_data = [data['list'][i]['main']for i in range(index)]
