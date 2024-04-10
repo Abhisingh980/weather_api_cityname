@@ -1,5 +1,5 @@
 import streamlit as st
-!pip install plotly
+#!pip install plotly
 import plotly.express as px
 import backend_weather as bw
 
