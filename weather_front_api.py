@@ -6,13 +6,24 @@ import seaborn as sns
 import backend_weather as bw
 import datetime as dt
 import pandas as pd
+from mlxtend.preprocessing import TransactionEncoder
+import numpy as np
+
+
+# import of city data to better expreance on seach the city
+city_name = pd.read_csv("/Users/abhisingh/Downloads/weather_api_cityname/simplemaps_worldcities_basicv1/worldcities.csv",usecols=['city'])
+
+# city dataframe consider  city column
+city_name = city_name.sort_values('city',axis=0,kind='meargesort')
 
 st.set_page_config(page_title="Weather Forcast", page_icon="🌦️", layout="wide")
 
-
+city_name_list = [i for i in city_name['city']]
 st.title("weather forcast for the next days".title())
-place = st.text_input("place:", placeholder="Enter A City Name")
-if place:
+place = st.selectbox(label="Select A City Name" ,options=city_name_list,
+    placeholder="Enter A City Name",index=None,kwargs={'color':'red'})
+
+if place is not None:
     frequency = st.slider("forcast days", min_value=1, max_value=5,
                           help="select the number of forcast days")
 
@@ -27,6 +38,9 @@ if place:
 # / 10 for floting point for better understandin
             temperature = [data[index]['temp'] for index in range(len(data))]
             temperature = [temperature[i] / 10 for i in range(len(data))]
+            temperature = [round(i,2) for i in temperature]
+            print(temperature)
+            #print(temperature)
 
 # remove only day and time from the date
             date = [dt.datetime.strptime(i, '%Y-%m-%d %H:%M:%S').strftime('%d %H:%M:%S') for i in date]
@@ -36,10 +50,10 @@ if place:
 
             fig, ax = plt.subplots(figsize=(20, 10))
 
-            sns.set_style(style='darkgrid',rc={'axes.facecolor':'#b8eb9b','figure.facecolor':'#0ee39f'})
+            sns.set_style(style='darkgrid',rc={'axes.facecolor':'#fadfca','figure.facecolor':'#0ee39f'})
 # plot the graph
             sns.lineplot(data_plot,x='date', y='temperature', marker='o',ax=ax,hue=temperature,
-                         linestyle="-",linewidth=5,markersize=10,markeredgecolor='black',palette='plasma',
+                         linestyle=":",markersize=15,markeredgecolor='black',palette='plasma',
                          )
 
             ax.set(xlabel='Date', ylabel='Temperature (c)',title='Temperature for the next days',
@@ -80,14 +94,36 @@ if place:
             st.pyplot(fig,clear_figure=True,use_container_width=True)
 
         else:
-            sky_type = [sky_dict[index][0]['main'] for index in range(len(data))]
-            sky_description = [sky_dict[index][0]['description'] for index in range(len(data))]
-            image_name = {"Clouds": "image/cloudy.jpg", "Rain": "image/rain.jpg",
-                          "Snow": "image/snow.jpeg", "Clear": "image/clear.png"}
-            sky = []
-            for image in sky_type:
-                sky.append(image_name[image])
+            # heat map for the sky
+            humidity = [str(data[index]['humidity']) for index in range(len(data))]
+            pressure = [str(data[index]['pressure']) for index in range(len(data))]
 
-            st.image(sky, caption=sky_description, width=200)
+            hp = pd.DataFrame({'Humidity':humidity,'Pressure':pressure})
+            hp = hp.corr()
+
+            sky = [value[0]['description'] for value in sky_dict]
+            sky.append(humidity)
+            encode = TransactionEncoder()
+            encode_data = encode.fit_transform(sky)
+            sky_data = pd.DataFrame(encode_data, columns=encode.columns_)
+            sky_data = sky_data.corr()
+            # mearge sky_data and humidity
+            fig, ax = plt.subplots(figsize=(20, 10))
+            sns.set_style(style='darkgrid',rc={'axes.facecolor':'#fadfca','figure.facecolor':'#0ee39f'})
+            sns.heatmap(hp, ax=ax, cmap='plasma')
+            ax.set(title='pressure and humidity')
+            ax.title.set_color('#000000')
+            ax.title.set_fontsize(30)
+            ax.title.set_fontweight('bold')
+            ax.xaxis.label.set_color('white')
+            ax.xaxis.label.set_fontsize(20)
+            ax.xaxis.label.set_fontweight('bold')
+            ax.yaxis.label.set_color('blue')
+            ax.yaxis.label.set_fontsize(20)
+            ax.yaxis.label.set_fontweight('bold')
+            st.pyplot(fig,clear_figure=True,use_container_width=True)
+
+
+
     else:
         st.write(data.title())
