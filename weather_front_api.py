@@ -9,6 +9,7 @@ import pandas as pd
 
 st.set_page_config(page_title="Weather Forcast", page_icon="🌦️", layout="wide")
 
+
 st.title("weather forcast for the next days".title())
 place = st.text_input("place:", placeholder="Enter A City Name")
 if place:
@@ -22,32 +23,34 @@ if place:
     data, date, sky_dict = bw.get_detail(place, frequency)
     if date:
         if option in "Temperature":
+# convert acording to no of temperature value
+# / 10 for floting point for better understandin
             temperature = [data[index]['temp'] for index in range(len(data))]
             temperature = [temperature[i] / 10 for i in range(len(data))]
 
-            # remove only day and time from the date
+# remove only day and time from the date
             date = [dt.datetime.strptime(i, '%Y-%m-%d %H:%M:%S').strftime('%d %H:%M:%S') for i in date]
 
-            #convert data into data fram to plot the graph for better calculation
+#convert data into data fram to plot the graph for better calculation
             data_plot = pd.DataFrame({'date': date, 'temperature': temperature})
 
-            fig, ax = plt.subplots(figsize=(10, 8))
+            fig, ax = plt.subplots(figsize=(20, 10))
 
             sns.set_style(style='darkgrid',rc={'axes.facecolor':'#b8eb9b','figure.facecolor':'#0ee39f'})
-
+# plot the graph
             sns.lineplot(data_plot,x='date', y='temperature', marker='o',ax=ax,hue=temperature,
                          linestyle="-",linewidth=5,markersize=10,markeredgecolor='black',palette='plasma',
                          )
 
             ax.set(xlabel='Date', ylabel='Temperature (c)',title='Temperature for the next days',
                 ylim=[min(data_plot['temperature'])-0.3,max(data_plot['temperature'])+0.5],adjustable='datalim',mouseover=True,)
-            # min of temperature dat and max of temperature data
+# min of temperature dat and max of temperature data
 
-            ax.legend(loc='upper right',bbox_to_anchor=(1.3,1),fontsize=15,shadow=True,
+            ax.legend(loc='upper right',bbox_to_anchor=(1.1,1),fontsize=15,shadow=True,
                 facecolor='white',edgecolor='black',title='Temperature',title_fontsize=20,
                 labelspacing=1.2,ncol=1)
 
-            # perform some operation on axises
+# perform some operation on axises
             l = ['top', 'right']
             b = ['bottom', 'left']
             for i,j in zip(l,b):
@@ -56,18 +59,23 @@ if place:
 
             plt.xticks(rotation=45,fontsize=12,fontweight='bold',color='red')
             plt.yticks(fontsize=12,fontweight='bold',color='blue')
-            # set the title color to blue and font size to 20 and font weight to bold
+
+# set the title color to blue and font size to 20 and font weight to bold
             ax.title.set_color('#000000')
             ax.title.set_fontsize(30)
             ax.title.set_fontweight('bold')
-            # set the xlabe; color to red and font size to 15 and font weight to bold
+
+# set the xlabe; color to red and font size to 15 and font weight to bold
             ax.xaxis.label.set_color('white')
             ax.xaxis.label.set_fontsize(20)
             ax.xaxis.label.set_fontweight('bold')
-            # ylabel set the color to blue and font size to 15 and font weight to bold
+
+# ylabel set the color to blue and font size to 15 and font weight to bold
             ax.yaxis.label.set_color('blue')
             ax.yaxis.label.set_fontsize(20)
             ax.yaxis.label.set_fontweight('bold')
+
+# final plot of grapgh is hear
 
             st.pyplot(fig,clear_figure=True,use_container_width=True)
 
